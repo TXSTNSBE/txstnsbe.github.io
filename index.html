@@ -99,6 +99,13 @@
   .btn-gold:hover { background: #FFC933; }
   .btn-ghost { border-color: rgba(255,255,255,.5); color: #fff; }
   .btn-ghost:hover { border-color: #fff; }
+  button.btn { font: inherit; font-weight: 700; cursor: pointer; background: none; }
+  .pay-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.25rem; max-width: 720px; }
+  .pay-panel[hidden] { display: none; }
+  .pay-card { padding: 1.25rem 1.25rem 1.4rem; border: 1px solid rgba(255,255,255,.2); border-top: 4px solid var(--gold); border-radius: 8px; background: rgba(255,255,255,.05); }
+  .pay-label { margin: 0; font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--gold); }
+  .pay-handle { margin: .35rem 0 1rem; font-size: 1.15rem; font-weight: 700; color: #fff; overflow-wrap: anywhere; }
+  .pay-note { margin: .85rem 0 0; font-size: .9rem; color: rgba(255,255,255,.75); }
   .hero .stripe { height: 18px; margin-top: clamp(3rem, 7vw, 5rem); }
   @media (max-width: 760px) { .hero-grid { grid-template-columns: 1fr; gap: 1.5rem; } }
   @media (prefers-reduced-motion: no-preference) {
@@ -370,6 +377,20 @@
         <a class="btn btn-gold" href="https://pci.jotform.com/form/262464507150049" target="_blank" rel="noopener">Fill out the membership form</a>
         <a class="btn btn-ghost" href="mailto:nsbe.txst.president@gmail.com">Email the chapter</a>
         <a class="btn btn-ghost" href="https://www.instagram.com/txstnsbe/" target="_blank" rel="noopener">Follow on Instagram</a>
+        <button class="btn btn-ghost pay-toggle" type="button" aria-expanded="false" aria-controls="pay-panel">Payment</button>
+      </div>
+      <div class="pay-panel" id="pay-panel" hidden>
+        <div class="pay-card">
+          <p class="pay-label">Cash App</p>
+          <p class="pay-handle">$txstatensbe</p>
+          <a class="btn btn-gold" href="https://cash.app/$txstatensbe" target="_blank" rel="noopener">Pay with Cash App</a>
+        </div>
+        <div class="pay-card">
+          <p class="pay-label">Zelle</p>
+          <p class="pay-handle">nsbe.txst.treasurer@gmail.com</p>
+          <button class="btn btn-ghost copy-zelle" type="button" data-copy="nsbe.txst.treasurer@gmail.com">Copy email</button>
+          <p class="pay-note">Open Zelle in your banking app and send to this email.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -647,6 +668,28 @@
     }
     render(NEWSLETTERS[0]);
   })();
+
+  const payBtn = document.querySelector(".pay-toggle");
+  const payPanel = document.getElementById("pay-panel");
+  payBtn.addEventListener("click", () => {
+    const open = payBtn.getAttribute("aria-expanded") === "true";
+    payBtn.setAttribute("aria-expanded", String(!open));
+    payPanel.hidden = open;
+  });
+  const copyBtn = document.querySelector(".copy-zelle");
+  copyBtn.addEventListener("click", async () => {
+    const text = copyBtn.dataset.copy;
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+      try {
+        const t = document.createElement("textarea"); t.value = text; t.setAttribute("readonly", "");
+        t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select();
+        ok = document.execCommand("copy"); t.remove();
+      } catch (e2) {}
+    }
+    copyBtn.textContent = ok ? "Copied!" : "Copy failed, select it above";
+    setTimeout(() => { copyBtn.textContent = "Copy email"; }, 2000);
+  });
 
   const board = document.getElementById("board");
   OFFICERS.forEach(o => {
