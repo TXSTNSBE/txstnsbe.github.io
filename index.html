@@ -99,6 +99,10 @@
   .btn-gold:hover { background: #FFC933; }
   .btn-ghost { border-color: rgba(255,255,255,.5); color: #fff; }
   .btn-ghost:hover { border-color: #fff; }
+  .cal-frame { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #212121; }
+  .cal-frame iframe { display: block; width: 100%; min-height: 700px; aspect-ratio: 680 / 720; border: 0; }
+  .cal-link { margin: 1rem 0 0; color: var(--muted); }
+  .cal-link a { color: var(--ink); font-weight: 600; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
   button.btn { font: inherit; font-weight: 700; cursor: pointer; background: none; }
   .pay-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.25rem; max-width: 720px; }
   .pay-panel[hidden] { display: none; }
@@ -335,7 +339,10 @@
     <div class="wrap">
       <h2>Upcoming events</h2>
       <p class="intro">General body meetings are open to everyone, members or not. Come see what we're about.</p>
-      <ul class="events" id="event-list"></ul>
+      <div class="cal-frame">
+        <iframe title="NSBE Texas State events calendar" src="https://timetreeapp.com/public_calendars/txstnsbe2627/embed/monthly?calendar_name=true&amp;frame_color=%23212121" loading="lazy"></iframe>
+      </div>
+      <p class="cal-link"><a href="https://timetreeapp.com/public_calendars/txstnsbe2627" target="_blank" rel="noopener">Open the full calendar in TimeTree</a> to see event details or follow us for reminders.</p>
     </div>
   </section>
 
@@ -553,7 +560,9 @@
     .filter(e => (e.end ? new Date(e.end + "T00:00:00") : e.d) >= today)
     .sort((a, b) => a.d - b.d);
 
-  if (!upcoming.length) {
+  if (!list) {
+    // Events now come from the embedded TimeTree calendar.
+  } else if (!upcoming.length) {
     list.innerHTML = '<li class="empty">No events posted yet. Check back soon or follow us on Instagram for updates.</li>';
   } else {
     const fmt = d => d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
